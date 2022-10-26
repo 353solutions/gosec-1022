@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 	"testing"
 	"time"
@@ -27,7 +28,9 @@ func TestDB(t *testing.T) {
 	}
 	require := require.New(t)
 
-	db, err := NewDB(dsn)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	db, err := NewDB(ctx, dsn)
 	require.NoError(err)
 	defer db.Close()
 
@@ -38,11 +41,15 @@ func TestDB(t *testing.T) {
 	require.NoError(err, "scan")
 
 	for _, e := range entries {
-		err := db.Add(e)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+		defer cancel()
+		err := db.Add(ctx, e)
 		require.NoErrorf(err, "insert %#v", e)
 	}
 
-	entry, err := db.Last()
+	ctx, cancel = context.WithTimeout(context.Background(), 10*time.Millisecond)
+	defer cancel()
+	entry, err := db.Last(ctx)
 	require.NoError(err, "last")
 	require.Equal(entries[len(entries)-1].Content, entry.Content, "content")
 }

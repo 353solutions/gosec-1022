@@ -1,10 +1,10 @@
 package main
 
 import (
+	"context"
 	_ "embed"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -26,7 +26,7 @@ type Server struct {
 func (s *Server) lastHandler(w http.ResponseWriter, r *http.Request) {
 	lastText := "No entries"
 
-	e, err := s.db.Last()
+	e, err := s.db.Last(r.Context())
 	if err == nil {
 		time := e.Time.Format("2006-01-02T15:04")
 		lastText = fmt.Sprintf("[%s] %s by %s", time, e.Content, e.Login)
@@ -43,15 +43,23 @@ func (s *Server) newHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var e Entry
 
-	lr := io.LimitReader(r.Body, maxMsgSize)
+	lr := http.MaxBytesReader(w, r.Body, maxMsgSize)
 	if err := json.NewDecoder(lr).Decode(&e); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	e.Time = time.Now()
-	err := s.db.Add(e)
+
+	if err := e.Validate(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err := s.db.Add(r.Context(), e)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	resp := map[string]interface{}{
@@ -63,13 +71,13 @@ func (s *Server) newHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-func (s *Server) Health() error {
-	return s.db.Health()
+func (s *Server) Health(ctx context.Context) error {
+	return s.db.Health(ctx)
 }
 
 // Get /health
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
-	if err := s.Health(); err != nil {
+	if err := s.Health(r.Context()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -82,7 +90,9 @@ func main() {
 	if dsn == "" {
 		dsn = "host=localhost user=postgres password=s3cr3t sslmode=disable"
 	}
-	db, err := NewDB(dsn)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	db, err := NewDB(ctx, dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
