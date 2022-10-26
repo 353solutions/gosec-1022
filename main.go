@@ -21,6 +21,7 @@ type Server struct {
 	db *DB
 }
 
+// GET /last -> HTML
 func (s *Server) lastHandler(w http.ResponseWriter, r *http.Request) {
 	lastText := "No entries"
 
@@ -32,6 +33,7 @@ func (s *Server) lastHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, lastHTML, lastText)
 }
 
+// POST /
 func (s *Server) newHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var e Entry
@@ -59,6 +61,7 @@ func (s *Server) Health() error {
 	return s.db.Health()
 }
 
+// Get /health
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	if err := s.Health(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -63,12 +63,10 @@ Miki Tebeka <i class="far fa-envelope"></i> [miki@353solutions.com](mailto:miki@
 
 # Data & Other
 
-- entries
-    - [add-1.json](_ws/add-1.json)
-    - [add-2.json](_ws/add-2.json)
-    - [add-3.json](_ws/add-3.json)
-- `docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=s3cr3t postgres:14-alpine`
+- `./run-db.sh`
+    - Will start postgres on port 5432
 - `docker exec -it <ID> psql -U postgres`
      - or `pgcli -p 5432 -U postgres -h localhost`
-- `curl -d@add-1.json http://localhost:8080/new`
+- `curl -d@_ws/add-1.json http://localhost:8080/api/journal`
+    - Try with add-2.json and add-3.json
 - `openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj /CN=localhost`
