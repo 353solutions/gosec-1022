@@ -9,6 +9,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/http/pprof"
 	"os"
 	"time"
 
@@ -22,7 +23,8 @@ var (
 )
 
 type Server struct {
-	db *DB
+	db  *DB
+	log *log.Logger
 }
 
 // GET /last -> HTML
@@ -73,7 +75,7 @@ func IsAuthorized(u User, method, path string) bool {
 	return true
 }
 
-func authMiddleware(h http.Handler) http.Handler {
+func authMiddleware(logger *log.Logger, h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		// Authentication
 		login, passwd, ok := r.BasicAuth() // JWT, API key ...
@@ -160,9 +162,11 @@ func main() {
 		log.Fatalf("ERROR: can't parse HTML - %s", err)
 	}
 
+	// dbPasswd := os.Getenv("JOURNAL_DB_PASSWD")
+	dbPasswd := "s3cr3t" // FIXME: Do the above
 	dsn := os.Getenv("JOURNAL_DSN")
 	if dsn == "" {
-		dsn = "host=localhost user=postgres password=s3cr3t sslmode=disable"
+		dsn = fmt.Sprintf("host=localhost user=postgres password=%s sslmode=disable", dbPasswd)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
@@ -171,22 +175,37 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s := Server{db}
+	logger := log.New(log.Writer(), "[JOURNAL ]", log.LstdFlags|log.Lshortfile)
+	s := Server{db, logger}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/last", s.lastHandler).Methods("GET")
 	// r.HandleFunc("/api/journal", s.newHandler).Methods("POST")
-	r.Handle("/api/journal", authMiddleware(http.HandlerFunc(s.newHandler))).Methods("POST")
+	h := authMiddleware(logger, http.HandlerFunc(s.newHandler))
+	r.Handle("/api/journal", h).Methods("POST")
 	r.HandleFunc("/api/health", s.healthHandler).Methods("GET")
 
-	http.Handle("/", r)
+	if os.Getenv("JOURNAL_PROFILE") == "yes" {
+		r.HandleFunc("/debug/pprof/profile", pprof.Profile)
+		r.HandleFunc("/debug/pprof/trace", pprof.Trace)
+	}
 
 	addr := os.Getenv("JOURNAL_ADDR")
 	if addr == "" {
 		addr = ":8080"
 	}
+
+	srv := http.Server{
+		Addr:         addr,
+		Handler:      r,
+		ReadTimeout:  time.Second,
+		WriteTimeout: time.Second,
+		IdleTimeout:  5 * time.Second,
+	}
+
 	log.Printf("server starting on %s", addr)
-	if err := http.ListenAndServe(addr, nil); err != nil {
+	// if err := srv.ListenAndServe(); err != nil {
+	if err := srv.ListenAndServeTLS("cert.pem", "key.pem"); err != nil {
 		log.Fatal(err)
 	}
 }

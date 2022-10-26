@@ -1,6 +1,17 @@
 
+Your product should be cutting edge, not your tech. Stability is sexy.
+    - Zach Holman
+
+If having a coffee in the morning doesn't wake you up, try deleting a table in a production database instead.
+    - Juozas Kaziukenas
+
+In general, it is best to assume that the network is filled with malevolent entities that will send in packets designed to have the worst possible effect.
+    - RFC 1122
 
 Every single company I've worked at and talked to has the same problem without a
 single exception so far - poor data quality, especially tracking data. Either
 there's incomplete data, missing tracking data, duplicative tracking data.
     - DJ Patil
+
+First rule of computer security: don't buy a computer. Second rule: if you buy one, don't turn it on.
+    - Dark Avenger
