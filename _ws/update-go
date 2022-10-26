@@ -1,0 +1,26 @@
+#!/bin/bash
+
+case $1 in
+    -h | --help ) echo "usage: $(basename $0) [VERSION]"; exit;;
+esac
+
+if [ $# -gt 1 ]; then
+    1>&2 echo "error: wrong number of arguments"
+    exit 1
+fi
+
+set -e
+cur=$(go version | awk '{print substr($3, 3)}')
+
+if [ -z "$1" ]; then
+    # bump patch
+    version=$(echo ${cur} | awk -F. '{print $1  "."  $2  "." $3+1}')
+else
+    version=$1
+fi
+
+echo "updating go to version ${version} (current: ${cur})"
+go install golang.org/dl/go${version}@latest
+go${version} download
+echo "updating link"
+ln -sfn ${HOME}/sdk/go${version} ${HOME}/sdk/go
