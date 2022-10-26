@@ -46,8 +46,17 @@ func (s *Server) lastHandler(w http.ResponseWriter, r *http.Request) {
 // Hint: io.NopCloser
 const maxMsgSize = 1 << 20
 
+// Exercise: write authMiddleware that will check for user/password
+// joe:baz00ka
+// and wrap newHandler with it
+// $ curl -d@_ws/add-1.json http://localhost:8080/api/journal
+// HTTP 405
+// $ curl -u joe:baz00ka -d@_ws/add-1.json http://localhost:8080/api/journal
+// HTTP 200
+
 // POST /
 func (s *Server) newHandler(w http.ResponseWriter, r *http.Request) {
+	// r.BasicAuth()
 	defer r.Body.Close()
 	var e Entry
 

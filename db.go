@@ -23,9 +23,9 @@ var (
 )
 
 type Entry struct {
-	Time    time.Time `json:"time"`
-	Login   string    `json:"user"`
-	Content string    `json:"content"`
+	Time    time.Time
+	Login   string
+	Content string
 }
 
 var zeroTime time.Time
