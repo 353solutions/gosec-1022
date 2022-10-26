@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -33,12 +34,17 @@ func (s *Server) lastHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, lastHTML, lastText)
 }
 
+// Home exercise: write a size limit middleware
+// Hint: io.NopCloser
+const maxMsgSize = 1 << 20
+
 // POST /
 func (s *Server) newHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var e Entry
 
-	if err := json.NewDecoder(r.Body).Decode(&e); err != nil {
+	lr := io.LimitReader(r.Body, maxMsgSize)
+	if err := json.NewDecoder(lr).Decode(&e); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 

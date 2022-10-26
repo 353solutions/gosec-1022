@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	_ "embed"
-	"fmt"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -44,13 +43,8 @@ func NewDB(dsn string) (*DB, error) {
 	return &DB{conn}, nil
 }
 
-func strDate(t time.Time) string {
-	return t.Format("2006-01-02 15:04:05")
-}
-
 func (d *DB) Add(e Entry) error {
-	sql := fmt.Sprintf(addSQL, strDate(e.Time), e.Login, e.Content)
-	_, err := d.conn.Exec(sql)
+	_, err := d.conn.Exec(addSQL, e.Time, e.Login, e.Content)
 	if err != nil {
 		return err
 	}
