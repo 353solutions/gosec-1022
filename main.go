@@ -50,9 +50,60 @@ const maxMsgSize = 1 << 20
 // joe:baz00ka
 // and wrap newHandler with it
 // $ curl -d@_ws/add-1.json http://localhost:8080/api/journal
-// HTTP 405
+// HTTP 401
 // $ curl -u joe:baz00ka -d@_ws/add-1.json http://localhost:8080/api/journal
 // HTTP 200
+
+type ctxKey int
+
+const key ctxKey = 1
+
+type User struct {
+	Login string
+	Roles []string
+}
+
+type CtxVars struct {
+	User User
+	// TODO: Request ID ...
+}
+
+func IsAuthorized(u User, method, path string) bool {
+	// TODO
+	return true
+}
+
+func authMiddleware(h http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		// Authentication
+		login, passwd, ok := r.BasicAuth() // JWT, API key ...
+		if !ok || !(login == "joe" && passwd == "baz00ka") {
+			http.Error(w, "bad creds", http.StatusUnauthorized)
+			return
+		}
+
+		// Authorization
+		// TODO: Load user from user store & check authorization
+		u := User{login, []string{"reader"}}
+		if !IsAuthorized(u, r.Method, r.URL.Path) {
+			http.Error(w, "not allowed", http.StatusForbidden)
+			return
+
+		}
+		v := CtxVars{
+			User: u,
+		}
+		// Use pointer to context so downward handlers/function can change it
+		ctx := context.WithValue(r.Context(), key, &v)
+		r = r.Clone(ctx)
+
+		h.ServeHTTP(w, r)
+
+		// TODO: Post action
+	}
+
+	return http.HandlerFunc(fn)
+}
 
 // POST /
 func (s *Server) newHandler(w http.ResponseWriter, r *http.Request) {
@@ -124,7 +175,8 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/last", s.lastHandler).Methods("GET")
-	r.HandleFunc("/api/journal", s.newHandler).Methods("POST")
+	// r.HandleFunc("/api/journal", s.newHandler).Methods("POST")
+	r.Handle("/api/journal", authMiddleware(http.HandlerFunc(s.newHandler))).Methods("POST")
 	r.HandleFunc("/api/health", s.healthHandler).Methods("GET")
 
 	http.Handle("/", r)
