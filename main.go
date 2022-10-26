@@ -4,7 +4,9 @@ import (
 	"context"
 	_ "embed"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -15,7 +17,8 @@ import (
 
 var (
 	//go:embed html/last.html
-	lastHTML string
+	lastHTML     string
+	lastTemplate *template.Template
 )
 
 type Server struct {
@@ -24,14 +27,19 @@ type Server struct {
 
 // GET /last -> HTML
 func (s *Server) lastHandler(w http.ResponseWriter, r *http.Request) {
-	lastText := "No entries"
-
 	e, err := s.db.Last(r.Context())
-	if err == nil {
-		time := e.Time.Format("2006-01-02T15:04")
-		lastText = fmt.Sprintf("[%s] %s by %s", time, e.Content, e.Login)
+	if err != nil {
+		if !errors.Is(err, ErrNotFound) {
+			http.Error(w, "can't query", http.StatusInternalServerError)
+			return
+		}
+
+		e = Entry{
+			Login:   "no one",
+			Content: "nothing",
+		}
 	}
-	fmt.Fprintf(w, lastHTML, lastText)
+	lastTemplate.Execute(w, e)
 }
 
 // Home exercise: write a size limit middleware
@@ -45,7 +53,8 @@ func (s *Server) newHandler(w http.ResponseWriter, r *http.Request) {
 
 	lr := http.MaxBytesReader(w, r.Body, maxMsgSize)
 	if err := json.NewDecoder(lr).Decode(&e); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		// exercise: send hand-crafted errors
+		http.Error(w, "bad JSON", http.StatusBadRequest)
 		return
 	}
 
@@ -58,7 +67,7 @@ func (s *Server) newHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := s.db.Add(r.Context(), e)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "can't store entry", http.StatusInternalServerError)
 		return
 	}
 
@@ -86,6 +95,11 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	var err error
+	lastTemplate, err = template.New("last").Parse(lastHTML)
+	if err != nil {
+		log.Fatalf("ERROR: can't parse HTML - %s", err)
+	}
+
 	dsn := os.Getenv("JOURNAL_DSN")
 	if dsn == "" {
 		dsn = "host=localhost user=postgres password=s3cr3t sslmode=disable"

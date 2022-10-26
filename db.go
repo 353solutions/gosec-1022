@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	_ "embed"
+	"errors"
 	"fmt"
 	"time"
 
@@ -72,10 +73,15 @@ func (d *DB) Add(ctx context.Context, e Entry) error {
 	return nil
 }
 
+var ErrNotFound = errors.New("not found")
+
 func (d *DB) Last(ctx context.Context) (Entry, error) {
 	row := d.conn.QueryRow(lastSQL)
 	var e Entry
 	if err := row.Scan(&e.Time, &e.Login, &e.Content); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = ErrNotFound
+		}
 		return Entry{}, err
 	}
 

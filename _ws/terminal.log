@@ -1,0 +1,468 @@
+./run-db.sh 
+3f802b4b629173310626aed82c0288287d0b1387c22cbcdc61aaa403008ee29f
+
+journal on  main [!?] via go v1.19.2 
+$ go version
+go version go1.19.2 linux/amd64
+
+journal on  main [!?] via go v1.19.2 
+$ docker ps
+CONTAINER ID   IMAGE                COMMAND                  CREATED         STATUS         PORTS                                       NAMES
+3f802b4b6291   postgres:14-alpine   "docker-entrypoint.s…"   3 minutes ago   Up 3 minutes   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   youthful_kapitsa
+
+journal on  main [!?] via go v1.19.2 
+$ docker exec -it 3f802b4b6291 psql -U postgres
+psql (14.5)
+Type "help" for help.
+
+postgres=# \d
+          List of relations
+ Schema |  Name   | Type  |  Owner   
+--------+---------+-------+----------
+ public | journal | table | postgres
+(1 row)
+
+postgres=# \d journal
+                         Table "public.journal"
+ Column  |            Type             | Collation | Nullable | Default 
+---------+-----------------------------+-----------+----------+---------
+ time    | timestamp without time zone |           |          | 
+ login   | text                        |           |          | 
+ content | text                        |           |          | 
+Indexes:
+    "journal_time" btree ("time")
+
+postgres=#SELET * FROM journal;
+ERROR:  syntax error at or near "SELET"
+LINE 1: SELET * FROM journal;
+        ^
+postgres=# ^D\q
+
+journal on  main [!?] via go v1.19.2 took 1m6s 
+$ curl -d@_ws/add-1.json http://localhost:8080/new
+404 page not found
+
+journal on  main [!?] via go v1.19.2 
+$ curl -d@_ws/add-1.json http://localhost:8080/api/journal
+{"error":null,"time":"2022-10-26T10:26:00.372107944+03:00"}
+
+journal on  main [!?] via go v1.19.2 
+$ docker exec -it 3f802b4b6291 psql -U postgres           
+psql (14.5)
+Type "help" for help.
+
+postgres=# SELET * FROM journal;
+ERROR:  syntax error at or near "SELET"
+LINE 1: SELET * FROM journal;
+        ^
+postgres=# SELECT * FROM journal;
+        time         | login |     content     
+---------------------+-------+-----------------
+ 2022-10-26 10:26:00 | Joe   | My first entry!
+(1 row)
+
+postgres=# \q
+
+journal on  main [!?] via go v1.19.2 took 18s 
+$curl -d@_ws/add-2.json http://localhost:8080/api/journal
+{"error":null,"time":"2022-10-26T10:26:32.846858585+03:00"}
+
+journal on  main [!?] via go v1.19.2 
+$ docker exec -it 3f802b4b6291 psql -U postgres           
+psql (14.5)
+Type "help" for help.
+
+postgres=# SELECT * FROM journal;
+ERROR:  relation "journal" does not exist
+LINE 1: SELECT * FROM journal;
+                      ^
+postgres=# \d
+Did not find any relations.
+postgres=# \q
+
+journal on  main [!?] via go v1.19.2 took 13s 
+$ which gp
+gp: aliased to git push
+
+journal on  main [?] via go v1.19.2 
+$ which go
+/home/miki/sdk/go/bin/go
+
+journal on  main [?] via go v1.19.2 
+$ # export PATH=${HOME}/sdk/go/bin:${PATH}
+
+journal on  main [?] via go v1.19.2 
+$ docker exec -it 3f802b4b6291 psql -U postgres
+psql (14.5)
+Type "help" for help.
+
+postgres=#SELECT * FROM journal;
+ERROR:  relation "journal" does not exist
+LINE 1: SELECT * FROM journal;
+                      ^
+postgres=# ^D\q
+
+journal on  main [?] via go v1.19.2 took 9s 
+$ docker exec -it 3f802b4b6291 psql -U postgres
+psql (14.5)
+Type "help" for help.
+
+postgres=# \d
+Did not find any relations.
+postgres=# \d
+          List of relations
+ Schema |  Name   | Type  |  Owner   
+--------+---------+-------+----------
+ public | journal | table | postgres
+(1 row)
+
+postgres=# SELECT * FROM journal;
+ time | login | content 
+------+-------+---------
+(0 rows)
+
+journal on  main [!?] via go v1.19.2 took 29s 
+❮ curl -d@_ws/add-2.json http://localhost:8080/api/journal
+{"error":null,"time":"2022-10-26T10:59:38.019077295+03:00"}
+
+journal on  main [!?] via go v1.19.2 
+❮ docker exec -it 3f802b4b6291 psql -U postgres           
+psql (14.5)
+Type "help" for help.
+
+postgres=#SELECT * FROM journal;
+            time            | login |                  content                   
+----------------------------+-------+--------------------------------------------
+ 2022-10-26 10:59:38.019077 | Joe   | My second entry!'); DROP TABLE journal; --
+(1 row)
+
+postgres=# SELECT * FROM journal;
+postgres=# \q
+
+journal on  main [!?] via go v1.19.2 took 12m33s 
+$ curl -d@_ws/add-2.json http://localhost:8080/api/journal
+unexpected EOF
+{"error":null,"time":"2022-10-26T11:12:16.505033406+03:00"}
+
+journal on  main [!?] via go v1.19.2 
+$ git diff
+
+journal on  main [!?] via go v1.19.2 took 9s 
+$ git add -u
+
+journal on  main [+?] via go v1.19.2 
+$ git commit -m 'sql injection and sizea limit'
+[main ca8e757] sql injection and sizea limit
+ 3 files changed, 9 insertions(+), 9 deletions(-)
+
+journal on  main [?⇡] via go v1.19.2 
+$ git push
+Enumerating objects: 11, done.
+Counting objects: 100% (11/11), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 756 bytes | 756.00 KiB/s, done.
+Total 6 (delta 3), reused 0 (delta 0), pack-reused 0remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To github.com:353solutions/gosec-1022.git
+   6e67c9b..ca8e757  main -> main
+
+journal on  main [?] via go v1.19.2 took 2s 
+$ curl -d'{}' http://localhost:8080/api/journal
+missing login
+{"error":null,"time":"2022-10-26T11:36:54.549599958+03:00"}
+
+journal on  main [!?] via go v1.19.2 
+$ !do
+
+journal on  main [!?] via go v1.19.2 
+$ docker exec -it 3f802b4b6291 psql -U postgres
+psql (14.5)
+Type "help" for help.
+
+postgres=# select * from journal;
+            time            | login |                  content                   
+----------------------------+-------+--------------------------------------------
+ 2022-10-26 10:59:38.019077 | Joe   | My second entry!'); DROP TABLE journal; --
+ 2022-10-26 11:12:16.505033 |       | 
+ 2022-10-26 11:36:54.549599 |       | 
+(3 rows)
+
+postgres=# \q
+
+journal on  main [!?] via go v1.19.2 took 21m49s 
+$ git add -u
+
+journal on  main [+?] via go v1.19.2 
+$ git commit -m 'context'[main ec70eb5] context
+ 3 files changed, 52 insertions(+), 15 deletions(-)
+
+journal on  main [?⇡] via go v1.19.2 
+$ git push
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 1.07 KiB | 1.07 MiB/s, done.
+Total 5 (delta 4), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+
+journal on  main [?] via go v1.19.2 took 2s 
+❮ curl -d@_ws/add-3.json http://localhost:8080/api/journal
+{"error":null,"time":"2022-10-26T12:01:20.201350101+03:00"}
+
+journal on  main [?] via go v1.19.2 
+$ docker ps
+CONTAINER ID   IMAGE                COMMAND                  CREATED       STATUS       PORTS                                       NAMES
+3f802b4b6291   postgres:14-alpine   "docker-entrypoint.s…"   2 hours ago   Up 2 hours   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   youthful_kapitsa
+
+journal on  main via go v1.19.2 
+$ docker info 3f802b4b6291
+"docker info" accepts no arguments.
+See 'docker info --help'.
+
+Usage:  docker info [OPTIONS]
+
+Display system-wide information
+journal on  main via go v1.19.2 
+$ docker inspect 3f802b4b6291
+[
+    {
+        "Id": "3f802b4b629173310626aed82c0288287d0b1387c22cbcdc61aaa403008ee29f",
+        "Created": "2022-10-26T07:20:40.09318722Z",
+        "Path": "docker-entrypoint.sh",
+        "Args": [
+            "postgres"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 393368,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2022-10-26T07:20:40.461649564Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:aac01494762a1319624f6117a3d9d374540ec58095c2c9f84adb92619aec3b6e",
+        "ResolvConfPath": "/var/lib/docker/containers/3f802b4b629173310626aed82c0288287d0b1387c22cbcdc61aaa403008ee29f/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/3f802b4b629173310626aed82c0288287d0b1387c22cbcdc61aaa403008ee29f/hostname",
+        "HostsPath": "/var/lib/docker/containers/3f802b4b629173310626aed82c0288287d0b1387c22cbcdc61aaa403008ee29f/hosts",
+        "LogPath": "/var/lib/docker/containers/3f802b4b629173310626aed82c0288287d0b1387c22cbcdc61aaa403008ee29f/3f802b4b629173310626aed82c0288287d0b1387c22cbcdc61aaa403008ee29f-json.log",
+        "Name": "/youthful_kapitsa",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {
+                "5432/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "5432"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/11dfd45656eb53f583b531e1a98a5935bfa2afd59ca79a80aa8e60201b157315-init/diff:/var/lib/docker/overlay2/34ef04c45a1353e750698e96e2ab517c0b20f47f0d01877362ea4f5c0e35641d/diff:/var/lib/docker/overlay2/df5b1fbb15164c991890eb8849c04dcd001168b7845ff61c185da22d6bc10685/diff:/var/lib/docker/overlay2/aff4d8b24c2ed60a8157e91ea094024949fa1ef984279a9e9f99182ab444b23e/diff:/var/lib/docker/overlay2/7d287201f838d479ef85577b6184050d3626cd98687cb222a058c0642406f3d0/diff:/var/lib/docker/overlay2/23c560a744c25cbf2422b234dd0d70066a1f0675f35be498a5b57625fafbf28a/diff:/var/lib/docker/overlay2/1f3a29f30f38af40f2b14850a45525f48367c3950a91fefa06af2bf1b9f976de/diff:/var/lib/docker/overlay2/d322e56b11da0e3cb9ee2756e57e2367160d176e01a02fb9eb2d07a8f3cd51c1/diff:/var/lib/docker/overlay2/b6b246c57a8132a00d91b20f882b209ef4fae8361f5170f80792f39832067d61/diff",
+                "MergedDir": "/var/lib/docker/overlay2/11dfd45656eb53f583b531e1a98a5935bfa2afd59ca79a80aa8e60201b157315/merged",
+                "UpperDir": "/var/lib/docker/overlay2/11dfd45656eb53f583b531e1a98a5935bfa2afd59ca79a80aa8e60201b157315/diff",
+                "WorkDir": "/var/lib/docker/overlay2/11dfd45656eb53f583b531e1a98a5935bfa2afd59ca79a80aa8e60201b157315/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "0459d0b7c027089b6ac27f1df4ea8f163bd6a90232cf877a48b3f94c57a4b83e",
+                "Source": "/var/lib/docker/volumes/0459d0b7c027089b6ac27f1df4ea8f163bd6a90232cf877a48b3f94c57a4b83e/_data",
+                "Destination": "/var/lib/postgresql/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+        "Config": {
+            "Hostname": "3f802b4b6291",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "5432/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "POSTGRES_PASSWORD=s3cr3t",
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=en_US.utf8",
+                "PG_MAJOR=14",
+                "PG_VERSION=14.5",
+                "PG_SHA256=d4f72cb5fb857c9a9f75ec8cf091a1771272802f2178f0b2e65b7b6ff64f4a30",
+                "PGDATA=/var/lib/postgresql/data"
+            ],
+            "Cmd": [
+                "postgres"
+            ],
+            "Image": "postgres:14-alpine",
+            "Volumes": {
+                "/var/lib/postgresql/data": {}
+            },
+            "WorkingDir": "",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {},
+            "StopSignal": "SIGINT"
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "acd87c6f9cf3d73bc8e9149d2755a40293123a2d047eb445781cb85dbe461998",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "5432/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "5432"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "5432"
+                    }
+                ]
+            },
+            "SandboxKey": "/var/run/docker/netns/acd87c6f9cf3",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "a6908f31d0f05862d255bc92b2aabdf85a485a4ed9f78220a2725f5c7b17067d",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:02",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "6719d599d30f0d90452e879f88849b7af6d58749d6057806f9a9d2e64b5bb4a7",
+                    "EndpointID": "a6908f31d0f05862d255bc92b2aabdf85a485a4ed9f78220a2725f5c7b17067d",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
