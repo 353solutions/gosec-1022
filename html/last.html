@@ -5,6 +5,7 @@
 	</head>
 	<body>
 	<h2>Last Entry</h2>
-	%s
+	[{{ .Time.Format "2006-01-02T15:04" }}] {{ .Content }} by {{ .Login }}
+
 	</body>
 </html>
