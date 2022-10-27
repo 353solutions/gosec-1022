@@ -19,10 +19,11 @@ Miki Tebeka <i class="far fa-envelope"></i> [miki@353solutions.com](mailto:miki@
 - Handling secrets
 - The security mindset and adding security to your development process
 
-[Terminal Log](terminal.log)
+[Terminal Log](_extra/terminal.log)
 
 # Links
 
+- [golang.org/x/time/rate](https://pkg.go.dev/golang.org/x/time/rate) - Rate limiting
 - [Let's talk about logging](https://dave.cheney.net/2015/11/05/lets-talk-about-logging) by Dave Cheney
 - [Go Security Policy](https://golang.org/security)
 - [Awesome security tools](https://github.com/guardrailsio/awesome-golang-security)
@@ -52,10 +53,11 @@ Miki Tebeka <i class="far fa-envelope"></i> [miki@353solutions.com](mailto:miki@
 - [Our Software Depenedcy Problem](https://research.swtch.com/deps)
 - [Go's CVE List](https://www.cvedetails.com/vulnerability-list/vendor_id-14185/Golang.html)
 - Static tools
-    - [golangci-lint](https://golangci-lint.run/)
     - [gosec](https://github.com/securego/gosec)
+    - `go install golang.org/x/vuln/cmd/govulncheck@latest`
     - [staticcheck](https://staticcheck.io/)
     - Use [x/tools/analysis](https://pkg.go.dev/golang.org/x/tools/go/analysis) to write your own (see [here](https://github.com/tebeka/recheck) for an example)
+    - [golangci-lint](https://golangci-lint.run/)
 - The new[embed](https://golang.org/pkg/embed/) package
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [The Security Mindset](https://www.schneier.com/blog/archives/2008/03/the_security_mi_1.html) by Bruce Schneier

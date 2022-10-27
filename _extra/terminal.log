@@ -466,3 +466,351 @@ $ docker inspect 3f802b4b6291
         }
     }
 ]
+journal on  main [!] via go v1.19.2 
+$ docker inspect -f '{{.NetworkSettings.Ports}}' 3f802b4b6291
+map[5432/tcp:[{0.0.0.0 5432} {:: 5432}]]
+
+journal on  main [!] via go v1.19.2 
+$ docker inspect -f '{{.NetworkSettings.Ports | json}}' 3f802b4b6291
+{"5432/tcp":[{"HostIp":"0.0.0.0","HostPort":"5432"},{"HostIp":"::","HostPort":"5432"}]}
+
+journal on  main [!] via go v1.19.2 
+$ git commit -m 'template' html/
+[main 3304ba2] template
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+journal on  main [✘!?⇡] via go v1.19.2 
+$ git push
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (4/4), 451 bytes | 451.00 KiB/s, done.
+Total 4 (delta 1), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To github.com:353solutions/gosec-1022.git
+   c17fbde..3304ba2  main -> main
+
+journal on  main [✘!?] via go v1.19.2 took 2s 
+$ git add -u
+
+journal on  main [✘+?] via go v1.19.2 
+$ git commit -m 'custom errors'
+[main 99b8d60] custom errors
+ 4 files changed, 497 insertions(+), 36 deletions(-)
+ delete mode 100644 _ws/tmpl.go
+journal on  main [?⇡] via go v1.19.2 
+$ git push
+Enumerating objects: 11, done.
+Counting objects: 100% (11/11), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 5.09 KiB | 5.09 MiB/s, done.
+Total 6 (delta 4), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+To github.com:353solutions/gosec-1022.git
+   3304ba2..99b8d60  main -> main
+
+journal on  main [?] via go v1.19.2 took 2s 
+$ echo Back 2pm
+Back 2pm
+
+journal on  main [!?] via go v1.19.2 
+❮ curl -d@_ws/add-3.json http://localhost:8080/api/journal
+curl: (7) Failed to connect to localhost port 8080 after 0 ms: Connection refused
+
+journal on  main [!?] via go v1.19.2 
+$ curl -u joe:baz00ka -d@_ws/add-3.json http://localhost:8080/api/journal
+curl: (7) Failed to connect to localhost port 8080 after 0 ms: Connection refused
+
+journal on  main [!?] via go v1.19.2 
+$ curl -d@_ws/add-3.json http://localhost:8080/api/journal               
+Warning: Couldn't read data from file "_ws/add-3.json", this makes an empty 
+Warning: POST.
+bad creds
+
+journal on  main [!?] via go v1.19.2 
+$curl -d@_extra/add-3.json http://localhost:8080/api/journal
+bad creds
+
+journal on  main [!?] via go v1.19.2 
+$ curl -i -d@_extra/add-3.json http://localhost:8080/api/journal
+HTTP/1.1 401 Unauthorized
+Content-Type: text/plain; charset=utf-8
+X-Content-Type-Options: nosniff
+Date: Wed, 26 Oct 2022 11:40:31 GMT
+Content-Length: 10
+
+bad creds
+
+journal on  main [!?] via go v1.19.2 
+$ curl -u joe:baz00ka -i -d@_extra/add-3.json http://localhost:8080/api/journal
+HTTP/1.1 400 Bad Request
+Content-Type: text/plain; charset=utf-8
+X-Content-Type-Options: nosniff
+Date: Wed, 26 Oct 2022 11:40:38 GMT
+Content-Length: 14
+
+missing login
+
+journal on  main [!?] via go v1.19.2 
+❮ curl -u joe:baz00ka -i -d@_extra/add-1.json http://localhost:8080/api/journal
+HTTP/1.1 400 Bad Request
+Content-Type: text/plain; charset=utf-8
+X-Content-Type-Options: nosniff
+Date: Wed, 26 Oct 2022 11:41:23 GMT
+Content-Length: 14
+
+missing login
+journal on  main [!?] via go v1.19.2 
+❮ curl -u joe:baz00ka -i -d@_extra/add-1.json http://localhost:8080/api/journal
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Wed, 26 Oct 2022 11:41:58 GMT
+Content-Length: 60
+
+{"error":null,"time":"2022-10-26T14:41:58.960417156+03:00"}
+
+journal on  main [!?] via go v1.19.2 
+$ git add -u
+
+journal on  main [+?] via go v1.19.2 
+$ git commit -m 'auth'
+[main 7c3c6a1] auth
+ 2 files changed, 55 insertions(+), 3 deletions(-)
+
+journal on  main [?⇡] via go v1.19.2 
+$ git push
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 1.04 KiB | 1.04 MiB/s, done.
+Total 5 (delta 3), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To github.com:353solutions/gosec-1022.git
+   f6031cd..7c3c6a1  main -> main
+
+journal on  main [?] via go v1.19.2 took 2s 
+$ curl http://localhost:8080/debug/pprof404 page not found
+
+journal on  main [!?] via go v1.19.2 
+$ curl http://localhost:8080/debug/pprof/profile
+404 page not found
+
+journal on  main [✘!?] via go v1.19.2 
+$ JOURNAL_PROFILE=yes curl http://localhost:8080/debug/pprof/profile
+404 page not found
+
+journal on  main [✘!?] via go v1.19.2 
+❮ JOURNAL_PROFILE=yes curl http://localhost:8080/debug/pprof/profile
+
+journal on  main [✘!?] via go v1.19.2 
+$ curl http://localhost:8080/debug/pprof/profile                    
+^C
+
+journal on  main [✘!?] via go v1.19.2 took 11s 
+$ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj /CN=localhost
+
+Generating a RSA private key
+.............................................................................................................................................................++++
+.................................................................................................++++
+writing new private key to 'key.pem'
+-----
+
+journal on  main [✘!?] via go v1.19.2 
+$ ls *pem
+cert.pem  key.pem
+
+journal on  main [✘!?] via go v1.19.2 
+$curl http://localhost:8080/health
+Client sent an HTTP request to an HTTPS server.
+
+journal on  main [✘!?] via go v1.19.2 
+$ curl https://localhost:8080/health
+curl: (60) SSL certificate problem: self signed certificate
+More details here: https://curl.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
+
+journal on  main [✘!?] via go v1.19.2 
+$ curl --insecure https://localhost:8080/health
+404 page not found
+
+journal on  main [✘!?] via go v1.19.2 
+$ curl --insecure https://localhost:8080/api/health
+OK
+
+journal on  main [✘!?] via go v1.19.2 
+$ curl -i --insecure https://localhost:8080/api/health
+HTTP/2 200 
+content-type: text/plain; charset=utf-8
+content-length: 3
+date: Wed, 26 Oct 2022 12:26:29 GMT
+
+OK
+
+journal on  main [✘!?] via go v1.19.2 
+$ go env | grep PROX
+GONOPROXY=""
+GOPROXY="https://proxy.golang.org,direct"
+journal on  main [✘!?] via go v1.19.2 
+$ go env | grep SUM 
+GONOSUMDB=""
+GOSUMDB="sum.golang.org"
+
+journal on  main [✘!?] via go v1.19.2 
+$ git add .
+
+journal on  main [✘+] via go v1.19.2 
+$ git commit -m 'logger'
+[main 0bb8c68] logger
+ 6 files changed, 145 insertions(+), 13 deletions(-)
+ create mode 100644 _extra/template_example.go
+ create mode 100644 cert.pem
+ create mode 100644 key.pem
+ delete mode 100644 profile.go
+
+journal on  main [⇡] via go v1.19.2 
+$ git push
+Enumerating objects: 12, done.
+Counting objects: 100% (12/12), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (8/8), 5.42 KiB | 5.42 MiB/s, done.
+Total 8 (delta 3), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To github.com:353solutions/gosec-1022.git
+   7c3c6a1..0bb8c68  main -> main
+
+journal on  main via go v1.19.2 took 2s 
+$ gosec ./...[gosec] 2022/10/26 16:21:43 Including rules: default
+[gosec] 2022/10/26 16:21:43 Excluding rules: default
+[gosec] 2022/10/26 16:21:43 Import directory: /home/miki/teaching/secure-go/journal/_extra
+[gosec] 2022/10/26 16:21:43 Import directory: /home/miki/teaching/secure-go/journal
+[gosec] 2022/10/26 16:21:43 Checking package: main
+[gosec] 2022/10/26 16:21:43 Checking file: /home/miki/teaching/secure-go/journal/_extra/template_example.go
+[gosec] 2022/10/26 16:21:43 Checking package: main
+[gosec] 2022/10/26 16:21:43 Checking file: /home/miki/teaching/secure-go/journal/db.go
+[gosec] 2022/10/26 16:21:43 Checking file: /home/miki/teaching/secure-go/journal/main.go
+Results:
+
+
+[/home/miki/teaching/secure-go/journal/main.go:153] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW)
+    152: 	w.Header().Set("Content-Type", "application/json")
+  > 153: 	json.NewEncoder(w).Encode(resp)
+    154: }
+
+
+
+[/home/miki/teaching/secure-go/journal/main.go:48] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW)
+    47: 	}
+  > 48: 	lastTemplate.Execute(w, e)
+    49: }
+
+
+
+[/home/miki/teaching/secure-go/journal/db.go:60] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW)
+    59: 	if _, err := conn.Exec(schemaSQL); err != nil {
+  > 60: 		conn.Close()
+    61: 		return nil, err
+
+
+
+[/home/miki/teaching/secure-go/journal/_extra/template_example.go:26] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW)
+    25: 	loc := Location{1.2, 3.4}
+  > 26: 	tmpl.Execute(os.Stdout, loc)
+    27: }
+
+
+
+Summary:
+  Gosec  : 2.14.0
+  Files  : 3
+  Lines  : 347
+  Nosec  : 0
+  Issues : 4
+
+journal on  main [!?] via go v1.19.2 
+$ gosec ./...
+[gosec] 2022/10/26 16:22:33 Including rules: default
+[gosec] 2022/10/26 16:22:33 Excluding rules: default
+[gosec] 2022/10/26 16:22:33 Import directory: /home/miki/teaching/secure-go/journal
+[gosec] 2022/10/26 16:22:33 Import directory: /home/miki/teaching/secure-go/journal/_extra
+[gosec] 2022/10/26 16:22:34 Checking package: main
+[gosec] 2022/10/26 16:22:34 Checking file: /home/miki/teaching/secure-go/journal/_extra/template_example.go
+[gosec] 2022/10/26 16:22:34 Checking package: main
+[gosec] 2022/10/26 16:22:34 Checking file: /home/miki/teaching/secure-go/journal/db.go
+[gosec] 2022/10/26 16:22:34 Checking file: /home/miki/teaching/secure-go/journal/main.go
+Results:
+
+
+[/home/miki/teaching/secure-go/journal/main.go:153] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW)
+    152: 	w.Header().Set("Content-Type", "application/json")
+  > 153: 	json.NewEncoder(w).Encode(resp)
+    154: }
+
+
+
+[/home/miki/teaching/secure-go/journal/main.go:48] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW)
+    47: 	}
+  > 48: 	lastTemplate.Execute(w, e)
+    49: }
+
+
+
+[/home/miki/teaching/secure-go/journal/db.go:60] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW)
+    59: 	if _, err := conn.Exec(schemaSQL); err != nil {
+  > 60: 		conn.Close()
+    61: 		return nil, err
+
+
+
+Summary:
+  Gosec  : 2.14.0
+  Files  : 3
+  Lines  : 348
+  Nosec  : 1
+  Issues : 3
+
+[/home/miki/teaching/secure-go/journal/db.go:60] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW)
+    59: 	if _, err := conn.Exec(schemaSQL); err != nil {
+  > 60: 		conn.Close()
+    61: 		return nil, err
+
+
+
+Summary:
+  Gosec  : 2.14.0
+  Files  : 3
+  Lines  : 348
+  Nosec  : 1
+  Issues : 3
+
+
+journal on  main [!?] via go v1.19.2 
+$ govulncheck .
+govulncheck is an experimental tool. Share feedback at https://go.dev/s/govulncheck-feedback.
+
+Scanning for dependencies with known vulnerabilities...
+No vulnerabilities found.
+
+=== Informational ===
+
+The vulnerabilities below are in packages that you import, but your code
+doesn't appear to call any vulnerable functions. You may not need to take any
+action. See https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck
+for details.
+
+Vulnerability #1: GO-2022-1059
+  An attacker may cause a denial of service by crafting an Accept-Language
+  header which ParseAcceptLanguage will take significant time to parse.
+
+  Found in: golang.org/x/text/language@v0.3.7
+  Fixed in: golang.org/x/text/language@v0.3.8
+  More info: https://pkg.go.dev/vuln/GO-2022-1059
+
+journal on  main [!?] via go v1.19.2 
+$

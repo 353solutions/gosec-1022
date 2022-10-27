@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"errors"
+	"expvar"
 	"fmt"
 	"html/template"
 	"log"
@@ -20,6 +21,9 @@ var (
 	//go:embed html/last.html
 	lastHTML     string
 	lastTemplate *template.Template
+
+	okLogins  = expvar.NewInt("login.ok")
+	badLogins = expvar.NewInt("login.bad")
 )
 
 type Server struct {
@@ -80,6 +84,8 @@ func authMiddleware(logger *log.Logger, h http.Handler) http.Handler {
 		// Authentication
 		login, passwd, ok := r.BasicAuth() // JWT, API key ...
 		if !ok || !(login == "joe" && passwd == "baz00ka") {
+			logger.Printf("WARNING [sec] %s no auth from %s", r.URL.Path, r.RemoteAddr)
+			badLogins.Add(1)
 			http.Error(w, "bad creds", http.StatusUnauthorized)
 			return
 		}
@@ -88,10 +94,15 @@ func authMiddleware(logger *log.Logger, h http.Handler) http.Handler {
 		// TODO: Load user from user store & check authorization
 		u := User{login, []string{"reader"}}
 		if !IsAuthorized(u, r.Method, r.URL.Path) {
+			logger.Printf("ERROR [sec] %s bad auth for %q from %s", login, r.URL.Path, r.RemoteAddr)
+			badLogins.Add(1)
 			http.Error(w, "not allowed", http.StatusForbidden)
 			return
-
 		}
+
+		logger.Printf("INFO [sec] %s %q logged in from %s", login, r.URL.Path, r.RemoteAddr)
+		okLogins.Add(1)
+
 		v := CtxVars{
 			User: u,
 		}
@@ -184,6 +195,7 @@ func main() {
 	h := authMiddleware(logger, http.HandlerFunc(s.newHandler))
 	r.Handle("/api/journal", h).Methods("POST")
 	r.HandleFunc("/api/health", s.healthHandler).Methods("GET")
+	r.Handle("/debug/vars", expvar.Handler())
 
 	if os.Getenv("JOURNAL_PROFILE") == "yes" {
 		r.HandleFunc("/debug/pprof/profile", pprof.Profile)
